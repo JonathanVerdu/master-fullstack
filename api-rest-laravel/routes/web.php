@@ -28,3 +28,6 @@ Route::get('/pruebas/{nombre?}', function($nombre = null){
 
 // Ruta con datos obtenidos de un controlador
 Route::get('/animales','PruebasController@index');
+
+// Ruta con datos obtenidos de la BBDD
+Route::get('/test-orm','PruebasController@testOrm');
