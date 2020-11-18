@@ -11,6 +11,7 @@
 |
 */
 
+// RUTAS DE PRUEBAS -----------------------------------------------------
 Route::get('/', function () {
     return view('welcome');
 });
@@ -31,3 +32,21 @@ Route::get('/animales','PruebasController@index');
 
 // Ruta con datos obtenidos de la BBDD
 Route::get('/test-orm','PruebasController@testOrm');
+
+// RUTAS DEL API ----------------------------------------------------------
+
+/* Métodos HTTP comunes
+    * GET: Conseguir datos o recursos.
+    * POST: Guardar datos, recursos o hacer lógica desde un formulario
+    * PUT: Actualizar datos o recursos
+    * DELETE: Eliminar datos o recursos
+*/
+
+// Rutas de prueba
+Route::get('/usuario/pruebas', 'UserController@pruebas');
+Route::get('/categoria/pruebas', 'CategoryController@pruebas');
+Route::get('/entrada/pruebas', 'PostController@pruebas');
+    
+// Rutas del controlador de usuario
+Route::post('/api/register', 'UserController@register');
+Route::post('/api/login', 'UserController@login');
