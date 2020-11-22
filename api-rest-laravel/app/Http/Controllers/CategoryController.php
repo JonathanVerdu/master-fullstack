@@ -8,14 +8,18 @@ use App\Category;
 
 class CategoryController extends Controller {
 
+    public function __construct() {
+        $this->middleware('api.auth', ['except' => ['index', 'show']]);
+    }
+
     public function index() {
 
         $categories = Category::all();
 
         return response()->json([
-            'code' => 200,
-            'status' => "success",
-            'categories' => $categories
+                    'code' => 200,
+                    'status' => "success",
+                    'categories' => $categories
         ]);
     }
 
@@ -37,6 +41,84 @@ class CategoryController extends Controller {
             );
         }
 
+        return response()->json($data, $data['code']);
+    }
+
+    public function store(Request $request) {
+
+        // Recoger los datos por POST
+        $json = $request->input('json', null);
+        $params_array = json_decode($json, true);
+        
+        if (!empty($params_array)) {
+            // Validar los datos
+            $validate = \Validator::make($params_array, [
+                        'name' => 'required'
+            ]);
+
+            // Guardar las categoría
+            if ($validate->fails()) {
+                $data = array(
+                    'code' => 400,
+                    'status' => "error",
+                    'message' => "No se ha guardado la categoría"
+                );
+            } else {
+                $category = new Category();
+                $category->name = $params_array['name'];
+                $category->save();
+
+                $data = array(
+                    'code' => 200,
+                    'status' => "success",
+                    'category' => $category
+                );
+            }
+        } else {
+            $data = array(
+                'code' => 400,
+                'status' => "error",
+                'message' => "No has enviado ninguna categoría"
+            );
+        }
+
+        // Devolver el resultado
+        return response()->json($data, $data['code']);
+    }
+    
+    public function update($id, Request $request){
+        // Recoger los datos que me llegan por POST
+        $json = $request->input('json', null);
+        $params_array = json_decode($json, true);
+        
+        if(!empty($params_array)){
+            // Validar los datos
+            $validate = \Validator::make($params_array, [
+                'name' => 'required'
+            ]);
+
+            // Quitar lo que no quiero actualizar
+            unset($params_array['id']);
+            unset($params_array['created_at']);
+
+            // Actualizar el registro(categorias)
+            $category = Category::where('id',$id)->update($params_array);
+            
+             $data = array(
+                'code' => 200,
+                'status' => "success",
+                'category' => $params_array
+            );
+            
+        }else{
+             $data = array(
+                'code' => 400,
+                'status' => "error",
+                'message' => "No has enviado ninguna categoría"
+            );
+        }
+        
+        // Devolver los datos
         return response()->json($data, $data['code']);
     }
 
