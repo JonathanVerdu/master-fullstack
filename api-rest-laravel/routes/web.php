@@ -50,4 +50,4 @@ Route::get('/entrada/pruebas', 'PostController@pruebas');
 // Rutas del controlador de usuario
 Route::post('/api/register', 'UserController@register');
 Route::post('/api/login', 'UserController@login');
-Route::post('/api/update', 'UserController@update');
+Route::put('/api/update', 'UserController@update');
