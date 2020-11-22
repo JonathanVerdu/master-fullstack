@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\User;
 
 class UserController extends Controller {
@@ -183,8 +184,13 @@ class UserController extends Controller {
         // Recoger los datos de la petición
         $image = $request->file('file0');
         
+        // Validar la imagen
+        $validate = \Validator::make($request->all(), [
+           'field0' => 'required|images|mimes:jpg,jpeg,png,gif'
+        ]);
+        
         // Guardar la imagen
-        if($image){
+        if($image || $validate->fails()){
             
             $image_name = time().$image->getClientOriginalName();
             \Storage::disk('users')->put($image_name, \File::get($image));
@@ -192,7 +198,7 @@ class UserController extends Controller {
             $data = array(
                 'code' => 200,
                 'image' => $image_name,
-                'status' => 'success',                 
+                'status' => 'success',
             );
               
         }else{
@@ -206,6 +212,24 @@ class UserController extends Controller {
         }      
          
         return response()->json($data, $data['code']);
+        
+    }
+    
+    public function getImage($filename){
+        
+        $isset = \Storage::disk('users')->exists($filename);
+        
+        if($isset){
+            $file = \Storage::disk("users")->get($filename);
+            return new Response($file,200);
+        }else{
+            $data = array(
+                'code' => 400,
+                'status' => 'error',
+                'message' => 'La imagen no existe',                 
+            );
+            return response()->json($data, $data['code']);
+        }
         
     }
     
